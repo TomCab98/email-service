@@ -1,4 +1,4 @@
-﻿package com.projects.services;
+package com.projects.services;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
