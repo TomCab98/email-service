@@ -1,0 +1,37 @@
+﻿name: Deploy Lambda
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn -B -DskipTests package
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::291967779068:role/GithubActionsLambdaDeployRole
+          aws-region: sa-east-1
+
+      - name: Deploy to Lambda
+        run: aws lambda update-function-code --function-name emailService --zip-file fileb://target/email-service-1.0.0.jar
